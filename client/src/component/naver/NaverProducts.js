@@ -9,18 +9,22 @@ function NaverProducts({ products }) {
           <span className="pImage">이미지</span>
           <span className="pTitle">제품명</span>
           <span className="pPrice">가격</span>
-          <span className="pBuy">구매</span>
+          <span className="pBuy">상품등록</span>
         </Product>
         {products.map((product) => (
           <Product key={product.productId}>
-            <img className="pImage" src={product.image} alt="" />
+            <div className="pImage">
+              <img src={product.image} alt="" />
+            </div>
             <div className="pTitle">
               <span dangerouslySetInnerHTML={{ __html: product.title }}></span>
             </div>
             <span className="pPrice">
               {product.lprice.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원
             </span>
-            <button className="pBuy">구매</button>
+            <div className="pBuy">
+              <button>등록</button>
+            </div>
           </Product>
         ))}
       </ProductsBox>
@@ -43,32 +47,41 @@ const Product = styled.li`
   overflow: hidden;
 
   .pImage {
-    width: 5rem;
-    object-fit: cover;
+    width: 10%;
+    img {
+      display: block;
+      margin: 0 auto;
+      width: 80%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
   .pTitle {
-    width: 70%;
+    width: 60%;
     height: 100%;
     display: table;
     span {
       display: table-cell;
-      padding: 0 5px;
+      padding-left: 20px;
       vertical-align: middle;
       text-overflow: ellipsis;
     }
   }
   .pPrice {
-    width: 8rem;
+    width: 20%;
     margin: auto 0;
     text-align: center;
   }
   .pBuy {
-    width: 3rem;
-    height: fit-content;
+    width: 10%;
     margin: auto 0;
-  }
-  button {
-    padding: 0.5rem 0;
+    button {
+      display: block;
+      padding: 0.5rem 1rem;
+      margin: 0 auto;
+      border-radius: 5px;
+      background-color: #f5df4d;
+    }
   }
 
   &:first-child {
