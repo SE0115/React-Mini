@@ -49,9 +49,9 @@ function Product() {
   }
 
   useEffect(() => {
-    console.log(selected)
-    console.log(selected.c1)
-    category2()
+    // console.log(selected)
+    // console.log(selected.c1)
+    // category2()
   }, [selected])
   
   return (
