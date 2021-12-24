@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { useHistory } from "react-router";
 
 function Register() {
   const [userInfo, setUserInfo] = useState({
@@ -13,7 +14,6 @@ function Register() {
     org: "",
     major: "",
   });
-  const [checkEmail, setCheckEmail] = useState(false);
 
   const onChange = (event) => {
     const { name, value } = event.target;
@@ -25,45 +25,59 @@ function Register() {
 
   const handleCheckEmail = () => {
     const { email } = userInfo;
-    const [email1, email2] = email.split('@')
+    const [email1, email2] = email.split("@");
     axios
       .post("/api/user?type=dplicheck", {
         user_email1: email1,
         user_email2: email2,
       })
       .then((res) => {
-        console.log(res.data.json[0].dupliEmailCount === '0')
         // 중복된 이메일이 없는 경우,
-        if (res.data.json[0].dupliEmailCount === '0') {
-          setCheckEmail(true);
-        }
-        else {
-          setCheckEmail(false)
+        if (res.data.json[0].dupliEmailCount === 0) {
+          // setCheckEmail(true);
+          if (
+            !window.confirm(
+              "사용 가능한 이메일입니다.\n해당 이메일 주소를 사용하시겠습니까?"
+            )
+          ) {
+            setUserInfo({
+              ...userInfo,
+              email: "",
+            });
+          }
+        } else {
+          alert("이미 등록된 이메일입니다.");
+          setUserInfo({
+            ...userInfo,
+            email: "",
+          });
         }
       });
   };
 
+  const history = useHistory();
+
   const handleSignUp = () => {
     const { email, password, name, phone, org, major } = userInfo;
-    const [email1, email2] = email.split('@')
+    const [email1, email2] = email.split("@");
     axios
-      .post('/api/user?type=signup', {
+      .post("/api/user?type=signup", {
         user_email1: email1,
         user_email2: email2,
         user_password: password,
         user_major: major,
         user_phone: phone,
         user_name: name,
-        user_org: org
+        user_org: org,
       })
       .then((res) => {
-        if (res.data === 'success') {
-          console.log('사용자 등록 성공')
+        if (res.data === "success") {
+          alert("회원가입 되었습니다.");
+          history.push("/");
+        } else {
+          alert("회원가입을 진행 도중 오류가 발생했습니다.");
         }
-        else {
-          console.log('사용장 등록 실패')
-        }
-      })
+      });
   };
 
   return (
@@ -71,12 +85,10 @@ function Register() {
       <h2 style={{ textAlign: "center", padding: "10px" }}>회원가입</h2>
       <SignUpBox>
         <label>
-          <span>이메일</span> 
-          <input name="email" onChange={onChange} />
+          <span>이메일</span>
+          <input name="email" onChange={onChange} value={userInfo.email} />
           <button onClick={handleCheckEmail}>중복 확인</button>
         </label>
-          {checkEmail && <span>사용가능한 이메일:)</span>}
-          {!checkEmail && <span>이미 등록된 이메일:(</span>}
         <label>
           <span>비밀번호</span>
           <input type="password" name="password" onChange={onChange} />
@@ -104,7 +116,9 @@ function Register() {
           <span>전화번호</span>
           <input placeholder="Phone Number" name="phone" onChange={onChange} />
         </label>
-        <button className="register" onClick={handleSignUp}>회원가입</button>
+        <button className="register" onClick={handleSignUp}>
+          회원가입
+        </button>
       </SignUpBox>
     </div>
   );
